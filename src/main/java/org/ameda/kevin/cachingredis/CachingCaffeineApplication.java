@@ -6,8 +6,8 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
 @EnableCaching
-public class CachingRedisApplication {
+public class CachingCaffeineApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(CachingRedisApplication.class, args);
+		SpringApplication.run(CachingCaffeineApplication.class, args);
 	}
 }

@@ -14,7 +14,10 @@ import org.ameda.kevin.cachingredis.payload.request.EmployeeRequest;
 import org.ameda.kevin.cachingredis.payload.request.UpdateNames;
 import org.ameda.kevin.cachingredis.repository.EmployeeRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -27,20 +30,21 @@ public class EmployeeServiceImpl implements EmployeeService{
 private final EmployeeRepository repository;
 private final ModelMapper modelMapper;
 
-    @Cacheable(value = "EmployeeRequest",key = "employeeNo")
+    @Cacheable(value = "EmployeeRequest",key = "#employeeNo")
     @Override
     public EmployeeRequest findByEmployeeNo(String employeeNo) {
     /*
     @author{author}
     */
-        log.info("Fetch employee from dB by employeeNo:{}",employeeNo);
         Optional<Employee> employee = repository
                 .findFirstByEmployeeNo(employeeNo);
+        log.info("Fetch employee from dB by employeeNo:{}",employeeNo);
        return employee
                 .map(value->modelMapper.map(value,EmployeeRequest.class))
                 .orElseThrow(()->new EmployeeNotFoundException("Couldn't find employee with passed employee number..."));
     }
 
+    @Caching
     @Override
     public List<EmployeeRequest> getAll() {
     /*
@@ -48,6 +52,7 @@ private final ModelMapper modelMapper;
     */
         List<Employee> all = repository.findAll();
         assert !(all.isEmpty());
+        log.info("fetching from the database.");
             return all.stream()
                 .map(emp-> modelMapper.map(emp,EmployeeRequest.class))
                 .toList();
@@ -56,6 +61,7 @@ private final ModelMapper modelMapper;
         * */
     }
 
+    @CachePut(value = "EmployeeRequestUpdate",key = "#employeeNo")
     @Override
     public EmployeeRequest update(String employeeNo, UpdateNames updateNames) {
     /*
@@ -69,6 +75,7 @@ private final ModelMapper modelMapper;
         return modelMapper.map(newEmployee,EmployeeRequest.class);
     }
 
+    @CacheEvict(value = "EmployeeRequestDelete",key = "#employeeNo")
     @Override
     public void delete(String employeeNo) {
     /*
@@ -78,6 +85,7 @@ private final ModelMapper modelMapper;
         employee.ifPresent(repository::delete);
     }
 
+    @CachePut(value = "EmployeeRequest", key = "#employeeRequest.employeeNo")
     @Override
     public EmployeeRequest createEmployee(EmployeeRequest employeeRequest) {
     /*

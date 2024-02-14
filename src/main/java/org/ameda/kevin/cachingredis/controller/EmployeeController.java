@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class EmployeeController {
     private final EmployeeService employeeService;
 
-    @GetMapping("/employee")
+    @GetMapping("/employee/one")
     public ResponseEntity<?> getEmployeeByNo(@RequestParam("employeeNo") String employeeNo){
         try{
             return new ResponseEntity<>(employeeService.findByEmployeeNo(employeeNo),HttpStatus.OK);
