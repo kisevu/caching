@@ -59,8 +59,8 @@ public class EmployeeController {
     public ResponseEntity<?> createEmployee(@RequestBody EmployeeRequest employeeRequest){
         try{
             return new ResponseEntity<>(employeeService.createEmployee(employeeRequest),HttpStatus.CREATED);
-        }catch (Exception ex){
-            return new ResponseEntity<>("couldn't create an employee",HttpStatus.BAD_REQUEST);
+        }catch (EmployeeNotFoundException ex){
+            return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 }

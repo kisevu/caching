@@ -30,7 +30,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 private final EmployeeRepository repository;
 private final ModelMapper modelMapper;
 
-    @Cacheable(value = "EmployeeRequest",key = "#employeeNo")
+    @Cacheable(value ="employees",key = "#employeeNo")
     @Override
     public EmployeeRequest findByEmployeeNo(String employeeNo) {
     /*
@@ -44,7 +44,7 @@ private final ModelMapper modelMapper;
                 .orElseThrow(()->new EmployeeNotFoundException("Couldn't find employee with passed employee number..."));
     }
 
-    @Caching
+    @CacheEvict(value="employees")
     @Override
     public List<EmployeeRequest> getAll() {
     /*
@@ -61,7 +61,7 @@ private final ModelMapper modelMapper;
         * */
     }
 
-    @CachePut(value = "EmployeeRequestUpdate",key = "#employeeNo")
+    @CachePut(value = "employees",key = "#employeeNo")
     @Override
     public EmployeeRequest update(String employeeNo, UpdateNames updateNames) {
     /*
@@ -71,11 +71,12 @@ private final ModelMapper modelMapper;
         assert employee.isPresent();
         employee.get().setFirstName(updateNames.getFirstName());
         employee.get().setLastName(updateNames.getLastName());
+        employee.get().setWorkDept(updateNames.getWorkDept());
         Employee newEmployee =  repository.save(employee.get());
         return modelMapper.map(newEmployee,EmployeeRequest.class);
     }
 
-    @CacheEvict(value = "EmployeeRequestDelete",key = "#employeeNo")
+    @CacheEvict(value = "employees",key = "#employeeNo")
     @Override
     public void delete(String employeeNo) {
     /*
@@ -85,7 +86,7 @@ private final ModelMapper modelMapper;
         employee.ifPresent(repository::delete);
     }
 
-    @CachePut(value = "EmployeeRequest", key = "#employeeRequest.employeeNo")
+    @CachePut(value = "employees", key = "#result.firstName")
     @Override
     public EmployeeRequest createEmployee(EmployeeRequest employeeRequest) {
     /*
@@ -97,6 +98,7 @@ private final ModelMapper modelMapper;
                 .lastName(employeeRequest.getLastName())
                 .workDept(employeeRequest.getWorkDept())
                 .build();
+        log.info("saving data");
         Employee savedEmployee = repository.save(employee);
         return modelMapper.map(savedEmployee,EmployeeRequest.class);
     }

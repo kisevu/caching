@@ -19,4 +19,5 @@ public class UpdateNames {
 
     private String firstName;
     private String lastName;
+    private String workDept;
 }
