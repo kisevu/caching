@@ -26,8 +26,7 @@ import java.util.UUID;
 public class EmployeeServiceImpl implements EmployeeService{
 private final EmployeeRepository repository;
 private final ModelMapper modelMapper;
-
-    @Cacheable(value = "EmployeeRequest",key = "employeeNo")
+    @Cacheable(value = "EmployeesCache",key = "#employeeNo")
     @Override
     public EmployeeRequest findByEmployeeNo(String employeeNo) {
     /*
@@ -46,6 +45,7 @@ private final ModelMapper modelMapper;
     /*
     @author{author}
     */
+        log.info("fetch from dB");
         List<Employee> all = repository.findAll();
         assert !(all.isEmpty());
             return all.stream()

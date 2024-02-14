@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class EmployeeController {
     private final EmployeeService employeeService;
 
-    @GetMapping("/employee")
+    @GetMapping("/one")
     public ResponseEntity<?> getEmployeeByNo(@RequestParam("employeeNo") String employeeNo){
         try{
             return new ResponseEntity<>(employeeService.findByEmployeeNo(employeeNo),HttpStatus.OK);
@@ -29,7 +29,7 @@ public class EmployeeController {
             return new ResponseEntity<>("unexpected error!",HttpStatus.EXPECTATION_FAILED);
         }
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<?> getAllEmployees(){
         try{
             return new ResponseEntity<>(employeeService.getAll(),HttpStatus.OK);
@@ -37,7 +37,7 @@ public class EmployeeController {
             return new ResponseEntity<>("",HttpStatus.NOT_FOUND);
         }
     }
-    @DeleteMapping("/employee/delete/{employeeNo}")
+    @DeleteMapping("/delete/{employeeNo}")
     public ResponseEntity<?> removeEmployee(@PathVariable("employeeNo") String employeeNo){
         try{
             employeeService.delete(employeeNo);
@@ -46,7 +46,7 @@ public class EmployeeController {
             return new ResponseEntity<>("not deleted",HttpStatus.NOT_ACCEPTABLE);
         }
     }
-    @PatchMapping("/employee/update")
+    @PatchMapping("/update")
     public ResponseEntity<?> updateEmployee(@RequestParam("employeeNo") String employeeNo, @RequestBody UpdateNames updateNames){
         try{
             return new ResponseEntity<>(employeeService.update(employeeNo,updateNames),HttpStatus.OK);
